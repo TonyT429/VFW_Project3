@@ -1,4 +1,4 @@
-// VFW 1206 Project 2
+// VFW 1206 Project 3
 // Anthony Torrez
 //
 
@@ -18,7 +18,7 @@ window.addEventListener("DOMContentLoaded", function() {
     // Create the element for the select field and fill with options
     
      function makeCats( ) {
-	console.log("Testing");
+//	console.log("Testing");
         var genreTypes = [ "-- Choose a Genre or Subject --", "Art & Photography", "Biographies & Memoirs", "Children's Books", "Computers & Technolory", "Cookbooks, Food & Wine", "Crafts, Hobbies, and Home", "Education & Reference", "Health, Fitness & Dieting", "History", "Horror", "Humor", "Law","Literature & Fiction", "Manga & Graphic Novels", "Math & Science", "Medical", "Mystery, Crime, Thriller & Suspense", "Parenting & Relationships", "Religion & Spirituality", "Romance", "Sci Fi & Fantasy", "Self Help", "Sports & Outdoors", "Teens", "Travel", "Western"];
         var formTag = document.getElementsByTagName( "form" ),
             selectLi = $( 'subject' ),
@@ -36,6 +36,7 @@ window.addEventListener("DOMContentLoaded", function() {
     }
     
      makeCats( );
+
     // Get value of selected Radio Button
     
     function getSelectedRadio( ) {
@@ -78,45 +79,16 @@ window.addEventListener("DOMContentLoaded", function() {
             item.btitle               = [ "Book Title:", $( 'btitle' ).value ];           
             item.author            = [ "Author:", $( 'author' ).value ];
             item.isbn                = [ "ISBN #:", $( 'isbn' ).value ];
-/*
-            item.children          = [ "Children's Books:", $( 'childrens' ).value ];
-            item.horror             = [ "Horror:", $( 'horror' ).value ];
-            item.humor             = [ "Humor:", $( 'humor' ).value ];
-            item.literature         = [ "Literature & Fiction:", $( 'literature' ).value ];
-            item.manga            = [ "Manga & Graphic Novels:", $( 'manga' ).value ];
-            item.mystery          = [ "Mystery, Crime, Thriller & Suspense:", $( 'mystery' ).value ];
-            item.romance         = [ "Romance:", $( 'romance' ).value ];
-            item.scifi                = [ "Sci-Fi & Fantasy:", $( 'scifi' ).value ];
-            item.western          = [ "Western:", $( 'western' ).value ];
-		  item.art                   = [ "Art & Photography:", $( 'art' ).value ];
-            item.biography       = [ "Biographies and Memoir:", $( 'biography' ).value ];
-            item.business         = [ "Business & Finance:", $( 'business' ).value ];
-            item.computers       = [ "Computers & Technology:", $( 'computers' ).value ];
-            item.cookbooks       = [ "Cookbooks, Food and Wine:", $( 'cookbooks' ).value ];
-            item.crafts               = [ "Crafts & Hobbies:", $( 'crafts' ).value ];
-            item.education        = [ "Education & Reference:", $( 'education' ).value ];
-            item.health              = [ "Health & Fitness:", $( 'health' ).value ];
-            item.history             = [ "History:", $( 'history' ).value ];
-            item.law                  = [ "Law:", $( 'law' ).value ];
-            item.medical           = [ "Medical:", $( 'medical' ).value ];
-            item.parenting        = [ "Parenting & Relationships:", $( 'parenting' ).value ];
-            item.religion           = [ "Religion & Spirituality:", $( 'religion' ).value ];
-            item.math               = [ "Math & Science:", $( 'math' ).value ];
-            item.selfhelp         = [ "Self-Help:", $( 'selfhelp' ).value ];
-            item.sports             = [ "Sports & Outdoors:", $( 'sports' ).value ];
-            item.teens              = [ "Teens:", $( 'teens' ).value ];
-            item.travel              = [ "Travel:", $( 'travel' ).value ];
-*/
+            item.series             = [ "Series:",  isaseries ];                           // for radio buttons
             item.seriesname    = [ "Series Name:", $( 'seriesname' ).value ];
             item.seriesnum      = [ "Series Number:", $( 'seriesnum' ).value ];
-            item.series             = [ "Series:",  isaseries ];                           // for radio buttons
+
             
 		// Save data to local storage using JSON stringify to convert objects to a string.
 		
         localStorage.setItem( id, JSON.stringify( item ) );
         alert ("Saved" );
     }
-
 
 
 	function getData ( ) {
@@ -133,6 +105,7 @@ window.addEventListener("DOMContentLoaded", function() {
         $( 'items' ).style.display = "block";
         for (var i=0, len=localStorage.length; i<len; i++ ) {
             var makeli = document.createElement( 'li' );
+            var linksLi = document.createElement( 'li' );
             makeList.appendChild( makeli );
             var key = localStorage.key( i );
             var value = localStorage.getItem( key );
@@ -145,9 +118,75 @@ window.addEventListener("DOMContentLoaded", function() {
                 makeSubList.appendChild( makeSubli );
                 var optSubText = obj[ n ] [ 0 ]+ " " +obj[ n ] [ 1 ];
                 makeSubli.innerHTML = optSubText;
+                makeSubList.appendChild(linksLi);
+                
 			}
+		 makeItemLinks( localStorage.key(i), linksLi);   // create the edit and delete buttons or links for each item in local storage.
 		}
 	}
+	
+	// Make Item Links - create the edit and delete links for each item when displayed.
+	
+	function makeItemLinks( key, linksLi ) {
+		console.log ("run makeItemLinks function");
+		// add edit single item link
+		var editLink = document.createElement( 'a' );
+		editLink.href = "#";      
+		editLink.key = key;
+		var editText = "Edit Book Info";
+//		editLink.addEventListener( "click", editItem );
+		editLink.innerHTML = editText;
+		linksLi.appendChild( editLink );     
+		
+		// add a line break
+		var breakTag = document.createElement( 'br' );
+		linksLi.appendChild( breakTag );
+		
+		// add delete single item link
+		var deleteLink = document.createElement( 'a' );
+		deleteLink.href = '#';
+		deleteLink.key = key;
+		var deleteText = "Delete Book Info";
+//		deleteLink.addEventListener( "click", deleteItem );
+		deleteLink.innerHTML = deleteText;
+		linksLi.appendChild( deleteLink );
+	}
+	
+	function editItem( ) {
+		// take the item data from local storage
+		var value = localStorage.getItem( this.key );
+		var item = JSON.parse( value );
+		
+		// Show the form
+		toggleControls( "off" );
+		
+		// populate the form with current localStorage values.
+		$( 'genre' ).value = item.genre[1];
+		$( 'btitle' ).value = item.btitle[1];
+		$( 'author' ).value = item.author[1];
+		$( 'isbn' ).value = item.isbn[1];
+		var radios = document.forms[0].isaseries;
+		for ( var i=0; i<radios.length; i++ ) {
+			if ( radios[i].value == "No" && item.isaseries[1] == "No" ) {
+				radios[i].setAttribute("checked", "checked" );
+			} else if( radios[i].value == "Yes" && item.isaseries[1] == "Yes" ) {
+				radios[i].setAttribute( "checked", "checked" );
+			}
+		}
+		$( 'seriesname' ).value = item.seriesname[1];
+		$( 'seriesnum' ).value = item.seriesnum[1];
+	}
+	
+	// Remove the initial listener from the input "save" button.
+	save.removeEventListener( "click", storeData );
+	// Change the submit button value to Edit button
+	$( 'submit' ).value = "Edit Book Info";
+	var editSubmit = $( 'submit' );
+	// Save the key value established in this function as a property of the editSubmit event
+	// so it can be used when we save the edited data.
+	editSubmit.addEventListener( "click", validate );
+	editSubmit.key = this.key;
+	
 	
 	 function clearLocData( ) {
         if (localStorage.length === 0) {
@@ -160,6 +199,36 @@ window.addEventListener("DOMContentLoaded", function() {
         }
     }
     
+	function validate( ) {
+		// Define the elements we want to check
+		var getGenre = $( 'genre' );
+		var getBtitle = $( 'btitle' );
+		var getAuthor = $( 'author' ); 
+		
+		// Get Error Messages
+		var messageArray = [ ];
+		// Genre Validation
+		if (getGenre.value === "-- Choose a Genre or Subject --") {
+			var genreError = "Please select a genre";
+			getGenre.style.border = "1px solid yellow";
+			messageArray.push( genreError );
+		}
+		
+		// Book Title Validation
+		if (getBtitle.value === " ") {
+		var btitleError = "Please enter the title of the book";
+			getBtitle.style.border = "1px solid yellow";
+			messageArray.push( authorError );
+		}
+		
+		// Author Validation
+		if (getAuthor.value === " ") {
+		var authorError = "Please enter the author's name";
+			getAuthor.style.border = "1px solid yellow";
+			messageArray.push( authorError );
+		}
+	
+	}
     // Variable defaults
 
     var isaseries;
@@ -175,7 +244,7 @@ window.addEventListener("DOMContentLoaded", function() {
     clearLink.addEventListener ( 'click', clearLocData );
     
     var save = $ ( 'submit' );
-    save.addEventListener ( 'click', storeData );
+    save.addEventListener ( 'click', validate );
 
 } );
 
